@@ -38,3 +38,10 @@ flows:
     interval: 10
     cron_offset: 3
     inject_time_offset: true
+  update_cache_contours_lasker:
+    module: flows_viz_cloud
+    flow_alias: update_cache_contours
+    deployment_name: update_cache_contours_lasker
+    interval: 10
+    cron_offset: 3
+    inject_time_offset: true
