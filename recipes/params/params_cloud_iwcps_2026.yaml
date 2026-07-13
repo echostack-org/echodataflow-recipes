@@ -33,7 +33,6 @@ flows:
     file_MVBS_zarr: latest_MVBS.zarr
   update_cache_contours:
     slice_mins: 180
-    avoid_latest_mins: 40
     path_cache: "/media/volume/shimada_202506_volume/viz_data_cache_2026/iwcsp_2026"
     path_EVR: "agr230002-bucket01/prefect_IWCPS_2026_new/acoustics/EVR"
     cred_file: "/home/exouser/.config/rclone/rclone.conf"
