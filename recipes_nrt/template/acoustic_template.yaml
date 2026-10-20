@@ -1,0 +1,16 @@
+﻿app:
+  title: Echoshader - Acoustic template
+  source: survey
+  route: ''
+  port: 1807
+data:
+  survey:
+    type: zarr
+    path: ../../.local/template/main/MVBS/MVBS_20230811T164000.zarr
+    label: Acoustic survey
+navigation:
+  max_pings: 500
+display:
+  max_range_samples: 1200
+
+

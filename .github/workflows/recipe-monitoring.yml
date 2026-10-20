@@ -25,32 +25,45 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Install Echodataflow
+      - name: Install Echostack packages
         run: |
           python -m pip install --upgrade pip
-
-          if [ -d "/workspace/dev/echodataflow" ]; then
-            echo "Using local Echodataflow repository"
-            pip install -e /workspace/dev/echodataflow
-          else
-            echo "Using GitHub Echodataflow repository"
-            pip install git+https://github.com/echostack-org/echodataflow.git@main
-          fi
+          python -m pip install -e .
+          python -m pip check
+          python -c "import fastapi, prefect; print('FastAPI:', fastapi.__version__, 'Prefect:', prefect.__version__)"
 
       - name: Start Prefect server
         run: |
-          prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api
-          nohup python -m prefect server start > prefect-server.log 2>&1 &
+          nohup python -m prefect server start \
+            > prefect-server.log 2>&1 < /dev/null &
 
-          for i in {1..30}; do
-            if curl -s http://127.0.0.1:4200/api/health >/dev/null; then
-              echo "Prefect server ready"
+          echo $! > prefect-server.pid
+
+          ready=false
+          for i in {1..60}; do
+            if curl --fail --silent http://127.0.0.1:4200/api/health > /dev/null; then
+              ready=true
               break
+            fi
+
+            if ! kill -0 "$(cat prefect-server.pid)" 2>/dev/null; then
+              echo "Prefect server exited"
+              cat prefect-server.log
+              exit 1
             fi
             sleep 2
           done
 
+          if [ "$ready" != true ]; then
+            echo "Prefect server did not become ready"
+            cat prefect-server.log
+            exit 1
+          fi
+
+          echo "Prefect server ready"
+
       - name: Test monitoring recipe
+        timeout-minutes: 3
         shell: python
         run: |
           import asyncio
@@ -144,7 +157,7 @@ jobs:
               deadline = time.time() + timeout
 
               while time.time() < deadline:
-                  if await has_event(event_name):
+                  if await asyncio.wait_for(has_event(event_name), timeout=5):
                       return
 
                   await asyncio.sleep(0.5)
@@ -215,7 +228,7 @@ jobs:
                       observer.join()
 
 
-          asyncio.run(main())
+          asyncio.run(asyncio.wait_for(main(), timeout=60))
 
           print("Monitoring recipe completed successfully.")
 
