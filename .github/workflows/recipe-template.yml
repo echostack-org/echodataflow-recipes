@@ -78,7 +78,7 @@ jobs:
           app = yaml.safe_load(app_path.read_text())
 
           app["data"]["survey"]["path"] = str(
-              root / ".local/basic/main/MVBS/MVBS_20230811T170000.zarr"
+              root / ".local/template/main/MVBS/MVBS_20230811T164000.zarr"
           )
 
           app_path.write_text(yaml.safe_dump(app, sort_keys=False))
@@ -94,13 +94,6 @@ jobs:
               echo "Prefect server ready"
               exit 0
             fi
-
-            if ! kill -0 "$(cat prefect-server.pid)" 2>/dev/null; then
-              echo "Prefect server exited"
-              cat prefect-server.log
-              exit 1
-            fi
-
             sleep 2
           done
 
