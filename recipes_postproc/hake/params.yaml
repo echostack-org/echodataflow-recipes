@@ -26,7 +26,7 @@ flows:
     file_Sv_csv: Sv_files.csv
     file_MVBS_csv: MVBS_files.csv
 
-  predict_hake_postprocessing:
+  classify_backscatter_postprocessing:
     path_main: /PATH/TO/WORKFLOW_OUTPUT
     path_weight: /PATH/TO/ML_MODEL/model.ckpt
     prediction_slice_mins: 40
