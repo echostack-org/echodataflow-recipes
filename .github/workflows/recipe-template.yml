@@ -1,4 +1,4 @@
-name: Basic recipe
+﻿name: Acoustic template recipe
 
 on:
   pull_request:
@@ -10,8 +10,11 @@ on:
 permissions:
   contents: read
 
+env:
+  PREFECT_API_URL: http://127.0.0.1:4200/api
+
 jobs:
-  basic-recipe:
+  acoustic-template:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     env:
@@ -32,13 +35,27 @@ jobs:
 
       - name: Prepare example data
         run: |
-          rm -rf .local/basic
-          mkdir -p .local/basic/raw
-          mkdir -p .local/basic/main
+          rm -rf .local/template
+          mkdir -p .local/template/raw
+          mkdir -p .local/template/main
 
-          curl -L \
-            https://noaa-wcsd-pds.s3.amazonaws.com/data/raw/Bell_M._Shimada/SH2306/EK80/Hake-D20230811-T165727.raw \
-            -o .local/basic/raw/Hake-D20230811-T165727.raw
+          BASE_URL="https://noaa-wcsd-pds.s3.amazonaws.com/data/raw/Bell_M._Shimada/SH2306/EK80"
+
+          for file in \
+            Hake-D20230811-T164746.raw \
+            Hake-D20230811-T165727.raw \
+            Hake-D20230811-T170531.raw \
+            Hake-D20230811-T171237.raw
+          do
+            curl --fail --location --retry 3 \
+              "$BASE_URL/$file" \
+              -o ".local/template/raw/$file"
+          done
+
+          echo "Downloaded raw files:"
+          ls -lh .local/template/raw/
+
+          test "$(find .local/template/raw -maxdepth 1 -name '*.raw' | wc -l)" -eq 4
 
       - name: Make configs CI-local
         run: |
@@ -48,20 +65,20 @@ jobs:
 
           root = Path.cwd().resolve()
 
-          params_path = Path("recipes_nrt/basic/params.yaml")
+          params_path = Path("recipes_nrt/template/params.yaml")
           params = yaml.safe_load(params_path.read_text())
 
-          params["flows"]["raw2Sv"]["path_raw"] = str(root / ".local/basic/raw")
-          params["flows"]["raw2Sv"]["path_main"] = str(root / ".local/basic/main")
-          params["flows"]["create_MVBS"]["path_main"] = str(root / ".local/basic/main")
+          params["flows"]["raw2Sv"]["path_raw"] = str(root / ".local/template/raw")
+          params["flows"]["raw2Sv"]["path_main"] = str(root / ".local/template/main")
+          params["flows"]["create_MVBS"]["path_main"] = str(root / ".local/template/main")
 
           params_path.write_text(yaml.safe_dump(params, sort_keys=False))
 
-          app_path = Path("recipes_nrt/basic/app.yaml")
+          app_path = Path("recipes_nrt/template/acoustic_template.yaml")
           app = yaml.safe_load(app_path.read_text())
 
           app["data"]["survey"]["path"] = str(
-              root / ".local/basic/main/MVBS/MVBS_20230811T170000.zarr"
+              root / ".local/template/main/MVBS/MVBS_20230811T164000.zarr"
           )
 
           app_path.write_text(yaml.safe_dump(app, sort_keys=False))
@@ -86,11 +103,14 @@ jobs:
 
       - name: Create work pool
         run: |
-          prefect work-pool create --type process local || true
+          prefect work-pool create --type process local
 
       - name: Start Prefect worker
         run: |
-          nohup python -m prefect worker start --pool local > prefect-worker.log 2>&1 &
+          nohup python -m prefect worker start --pool local \
+            > prefect-worker.log 2>&1 < /dev/null &
+
+          echo $! > prefect-worker.pid
           sleep 5
 
       - name: Check Prefect API before deployment
@@ -101,31 +121,31 @@ jobs:
         run: |
           python -m echodataflow.deployment.deploy_cli run \
             --default-work-pool-name local \
-            --param-config recipes_nrt/basic/params.yaml \
-            --deploy-spec recipes_nrt/basic/deploy.yaml
+            --param-config recipes_nrt/template/params.yaml \
+            --deploy-spec recipes_nrt/template/deploy.yaml
 
       - name: Run raw2Sv
         run: |
-          prefect deployment run "flow-raw2Sv/raw2Sv-basic" --watch
+          prefect deployment run "flow-raw2Sv/raw2Sv-template" --watch
 
       - name: Run create_MVBS
         run: |
           OFFSET=$(python - <<'PY'
           from datetime import datetime, timezone
 
-          target = datetime.fromisoformat("2023-08-11T17:06:00+00:00")
+          target = datetime.fromisoformat("2023-08-11T17:20:00+00:00")
           print(int((datetime.now(timezone.utc) - target).total_seconds()))
           PY
           )
 
-          prefect deployment run "flow-create-MVBS/create-MVBS-basic" \
+          prefect deployment run "flow-create-MVBS/create-MVBS-template" \
             --param time_offset_seconds=$OFFSET \
             --watch
 
       - name: Verify MVBS output
         run: |
-          test -d .local/basic/main/MVBS/MVBS_20230811T170000.zarr
-          ls -la .local/basic/main/MVBS
+          test -d .local/template/main/MVBS/MVBS_20230811T164000.zarr
+          ls -la .local/template/main/MVBS
 
       - name: Build Echoshader app
         run: |
@@ -133,7 +153,7 @@ jobs:
           from echoshader.app.config import load_config
           from echoshader.app.builder import build_app
 
-          config = load_config("recipes_nrt/basic/app.yaml")
+          config = load_config("recipes_nrt/template/acoustic_template.yaml")
           app = build_app(config)
 
           assert app is not None
@@ -154,16 +174,17 @@ jobs:
           local_act_root = Path("/workspace/dev/echodataflow-recipes")
 
           if local_act_root.exists():
-              output_dir = local_act_root / ".local/pages/basic-recipe"
+              output_dir = local_act_root / ".local/pages/acoustic-template"
           else:
-              output_dir = root / ".local/pages/basic-recipe"
+              output_dir = root / ".local/pages/acoustic-template"
 
           output_dir.mkdir(parents=True, exist_ok=True)
           output = output_dir / "index.html"
 
-          config = load_config("recipes_nrt/basic/app.yaml")
+          config = load_config("recipes_nrt/template/acoustic_template.yaml")
           app = build_app(config)
 
+          # Static HTML export is a snapshot; server-side Panel callbacks require a live server.
           save(
               app,
               output,
@@ -171,6 +192,7 @@ jobs:
               resources="inline",
           )
 
+          assert output.is_file() and output.stat().st_size > 0
           print(f"Saved static app to {output}")
           PY
 
@@ -183,8 +205,8 @@ jobs:
         if: github.event_name == 'pull_request' && !env.ACT
         uses: actions/upload-artifact@v4
         with:
-          name: basic-recipe-preview
-          path: .local/pages/basic-recipe
+          name: acoustic-template-preview
+          path: .local/pages/acoustic-template
 
       - name: Upload GitHub Pages artifact
         if: github.event_name == 'push'
@@ -200,7 +222,7 @@ jobs:
 
   deploy-pages:
     if: github.event_name == 'push'
-    needs: basic-recipe
+    needs: acoustic-template
     runs-on: ubuntu-latest
 
     permissions:
@@ -215,3 +237,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+

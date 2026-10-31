@@ -1,11 +1,19 @@
-# echodataflow-recipes
+# Echodataflow recipes
 
-This repository hosts recipes that can be used with [`Echodataflow`](https://github.com/OSOceanAcoustics/echodataflow) to deploy echosounder data processing workflows.
+This repository contains runnable workflows for [Echodataflow](https://github.com/echostack-org/echodataflow), together with [Echoshader](https://github.com/echostack-org/echoshader) visualization configurations.
 
-The recipes are stored with the following structure:
+The recipes are organized as follows:
+
+```text
+recipes_nrt/          # Near-real-time recipes
+  cps/
+  hake/
+  monitoring/
+  spasso/
+  template/
+
+recipes_postproc/     # Post-processing recipes
+  hake/
 ```
-recipes
-  |--- deploy     # deployment specification for flows
-  |--- params     # parameters used by flows
-  |--- resources  # ancillary files used by flows
-```
+
+Each recipe includes deploy.yaml (flow deployments), params.yaml (processing parameters), and any required resources or visualization configurations.

@@ -1,6 +1,6 @@
-flows:
+﻿flows:
   raw2Sv:
-    exclude_before: "2023-08-11T00:00:00+00:00"
+    exclude_before: '2023-08-11T00:00:00+00:00'
     exclude_raw_file: []
     parallel: false
     encode_mode: power
@@ -8,16 +8,16 @@ flows:
     depth_offset: 7
     sonar_model: EK80
     nmea_sentence: GGA
-    filename_pattern: "Hake-*.raw"
-    path_raw: ".local/basic/raw"
-    path_main: ".local/basic/main"
+    filename_pattern: Hake-*.raw
+    path_raw: .local/template/raw
+    path_main: .local/template/main
     file_Sv_csv: Sv_files.csv
-
   create_MVBS:
-    slice_mins: 2
-    num_slices: 5
+    slice_mins: 40
+    num_slices: 1
     range_bin: 2m
     ping_time_bin: 10s
-    path_main: ".local/basic/main"
+    path_main: .local/template/main
     file_Sv_csv: Sv_files.csv
     file_MVBS_csv: MVBS_files.csv
+
