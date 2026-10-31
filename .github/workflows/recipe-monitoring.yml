@@ -42,12 +42,6 @@ jobs:
               echo "Prefect server ready"
               exit 0
             fi
-
-            if ! kill -0 "$(cat prefect-server.pid)" 2>/dev/null; then
-              echo "Prefect server exited"
-              cat prefect-server.log
-              exit 1
-            fi
             sleep 2
           done
 
