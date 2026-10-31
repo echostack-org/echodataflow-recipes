@@ -12,6 +12,7 @@ permissions:
 jobs:
   test-monitoring:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
 
     env:
       PREFECT_API_URL: http://127.0.0.1:4200/api
@@ -25,25 +26,21 @@ jobs:
         with:
           python-version: "3.13"
 
-      - name: Install Echostack packages
+      - name: Install Echodataflow recipes dependencies
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e .
           python -m pip check
-          python -c "import fastapi, prefect; print('FastAPI:', fastapi.__version__, 'Prefect:', prefect.__version__)"
 
       - name: Start Prefect server
         run: |
-          nohup python -m prefect server start \
-            > prefect-server.log 2>&1 < /dev/null &
+          nohup python -m prefect server start --host 127.0.0.1 --port 4200 \
+            > prefect-server.log 2>&1 &
 
-          echo $! > prefect-server.pid
-
-          ready=false
           for i in {1..60}; do
-            if curl --fail --silent http://127.0.0.1:4200/api/health > /dev/null; then
-              ready=true
-              break
+            if curl -fs http://127.0.0.1:4200/api/health >/dev/null; then
+              echo "Prefect server ready"
+              exit 0
             fi
 
             if ! kill -0 "$(cat prefect-server.pid)" 2>/dev/null; then
@@ -54,13 +51,9 @@ jobs:
             sleep 2
           done
 
-          if [ "$ready" != true ]; then
-            echo "Prefect server did not become ready"
-            cat prefect-server.log
-            exit 1
-          fi
-
-          echo "Prefect server ready"
+          echo "Prefect server failed to start"
+          cat prefect-server.log
+          exit 1
 
       - name: Test monitoring recipe
         timeout-minutes: 3

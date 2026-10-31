@@ -16,6 +16,9 @@ env:
 jobs:
   acoustic-template:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PREFECT_API_URL: http://127.0.0.1:4200/api
 
     steps:
       - uses: actions/checkout@v4
@@ -29,7 +32,6 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e .
           python -m pip check
-          python -c "import fastapi, prefect; print('FastAPI:', fastapi.__version__, 'Prefect:', prefect.__version__)"
 
       - name: Prepare example data
         run: |
@@ -75,8 +77,8 @@ jobs:
           app_path = Path("recipes_nrt/template/acoustic_template.yaml")
           app = yaml.safe_load(app_path.read_text())
 
-          app["data"][app["app"].get("source", "survey")]["path"] = str(
-              root / ".local/template/main/MVBS/MVBS_20230811T164000.zarr"
+          app["data"]["survey"]["path"] = str(
+              root / ".local/basic/main/MVBS/MVBS_20230811T170000.zarr"
           )
 
           app_path.write_text(yaml.safe_dump(app, sort_keys=False))
@@ -84,15 +86,13 @@ jobs:
 
       - name: Start Prefect server
         run: |
-          nohup python -m prefect server start \
-            > prefect-server.log 2>&1 < /dev/null &
-
-          echo $! > prefect-server.pid
+          nohup python -m prefect server start --host 127.0.0.1 --port 4200 \
+            > prefect-server.log 2>&1 &
 
           for i in {1..60}; do
-            if curl --fail --silent http://127.0.0.1:4200/api/health > /dev/null; then
+            if curl -fs http://127.0.0.1:4200/api/health >/dev/null; then
               echo "Prefect server ready"
-              break
+              exit 0
             fi
 
             if ! kill -0 "$(cat prefect-server.pid)" 2>/dev/null; then
@@ -104,7 +104,9 @@ jobs:
             sleep 2
           done
 
-          curl --fail http://127.0.0.1:4200/api/health
+          echo "Prefect server failed to start"
+          cat prefect-server.log
+          exit 1
 
       - name: Create work pool
         run: |
@@ -118,10 +120,9 @@ jobs:
           echo $! > prefect-worker.pid
           sleep 5
 
-      - name: Check Prefect connection
+      - name: Check Prefect API before deployment
         run: |
-          echo "PREFECT_API_URL=$PREFECT_API_URL"
-          curl --fail --show-error http://127.0.0.1:4200/api/health
+          curl -fsS http://127.0.0.1:4200/api/health
 
       - name: Deploy flows
         run: |
@@ -208,7 +209,7 @@ jobs:
           cp pages/index.html .local/pages/index.html
 
       - name: Upload PR preview artifact
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && !env.ACT
         uses: actions/upload-artifact@v4
         with:
           name: acoustic-template-preview
