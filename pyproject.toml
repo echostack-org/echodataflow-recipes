@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "echodataflow-recipes"
+version = "0.1.0"
+description = "Example workflows and recipes for Echodataflow"
+requires-python = ">=3.13,<3.15"
+dependencies = [
+    "echoshader",
+    "echodataflow @ git+https://github.com/echostack-org/echodataflow.git@main",
+    "fastapi<0.155",
+]
+
+[tool.setuptools]
+packages = []

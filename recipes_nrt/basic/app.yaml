@@ -1,54 +1,17 @@
+app:
+  title: Echodataflow Basic Recipe
+  source: survey
+  route: basic
+
 data:
-  mvbs:
+  survey:
     type: zarr
     path: .local/basic/main/MVBS/MVBS_20230811T170000.zarr
+    label: NOAA SH2306 Pacific hake survey
 
-elements:
-  echograms:
-    type: echogram
-    data: mvbs
-    args:
-      vert_dim: depth
-      channel:
-        - "WBT 400141-15 ES18_ES"
-        - "WBT 400143-15 ES38B_ES"
-        - "WBT 400142-15 ES70-7C_ES"
-        - "WBT 400140-15 ES120-7C_ES"
-        - "WBT 400145-15 ES200-7C_ES"
-    opts:
-      clim: [-70, -36]
-      cmap: viridis
-      width: 1000
-      height: 400
-      tools:
-        - hover
+navigation:
+  max_pings: 500
 
-  tricolor:
-    type: tricolor_echogram
-    data: mvbs
-    args:
-      vert_dim: depth
-      channel:
-        - "WBT 400140-15 ES120-7C_ES"
-        - "WBT 400143-15 ES38B_ES"
-        - "WBT 400141-15 ES18_ES"
-      vmin: -70
-      vmax: -36
-    opts:
-      width: 1000
-      height: 400
-      tools:
-        - hover
-
-layout:
-  type: tabs
-  children:
-    - title: Multi-frequency
-      type: column
-      children:
-        - echograms
-
-    - title: Tricolor
-      type: column
-      children:
-        - tricolor
+display:
+  max_range_samples: 1200
+  map_height: 500
