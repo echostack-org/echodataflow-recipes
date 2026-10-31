@@ -65,17 +65,24 @@ jobs:
           PY
 
       - name: Start Prefect server
+        env:
+          PREFECT_API_URL: http://127.0.0.1:4200/api
         run: |
-          prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api
-          nohup python -m prefect server start > prefect-server.log 2>&1 &
+          nohup python -m prefect server start --host 127.0.0.1 --port 4200 \
+            > prefect-server.log 2>&1 &
 
-          for i in {1..30}; do
-            if curl -s http://127.0.0.1:4200/api/health >/dev/null; then
+          for i in {1..60}; do
+            if curl --fail --silent --show-error \
+              http://127.0.0.1:4200/api/health >/dev/null; then
               echo "Prefect server ready"
-              break
+              exit 0
             fi
             sleep 2
           done
+
+          echo "Prefect server failed to start"
+          cat prefect-server.log
+          exit 1
 
       - name: Create work pool
         run: |
@@ -85,6 +92,10 @@ jobs:
         run: |
           nohup python -m prefect worker start --pool local > prefect-worker.log 2>&1 &
           sleep 5
+
+      - name: Check Prefect API before deployment
+        run: |
+          curl --fail --show-error http://127.0.0.1:4200/api/health
 
       - name: Deploy flows
         run: |
