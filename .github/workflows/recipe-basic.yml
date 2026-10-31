@@ -13,6 +13,9 @@ permissions:
 jobs:
   basic-recipe:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PREFECT_API_URL: http://127.0.0.1:4200/api
 
     steps:
       - uses: actions/checkout@v4
@@ -24,20 +27,8 @@ jobs:
       - name: Install Echostack packages
         run: |
           python -m pip install --upgrade pip
-
-          if [ -d "/workspace/dev/echopype" ] && \
-             [ -d "/workspace/dev/echodataflow" ] && \
-             [ -d "/workspace/dev/echoshader" ]; then
-            echo "Using local Echostack repositories"
-            pip install -e /workspace/dev/echopype
-            pip install -e /workspace/dev/echodataflow
-            pip install -e /workspace/dev/echoshader
-          else
-            echo "Using GitHub Echostack repositories"
-            pip install git+https://github.com/echostack-org/echopype.git@main
-            pip install git+https://github.com/echostack-org/echodataflow.git@main
-            pip install git+https://github.com/echostack-org/echoshader.git@overhaul
-          fi
+          python -m pip install -e .
+          python -m pip check
 
       - name: Prepare example data
         run: |
@@ -69,7 +60,7 @@ jobs:
           app_path = Path("recipes_nrt/basic/app.yaml")
           app = yaml.safe_load(app_path.read_text())
 
-          app["data"]["mvbs"]["path"] = str(
+          app["data"]["survey"]["path"] = str(
               root / ".local/basic/main/MVBS/MVBS_20230811T170000.zarr"
           )
 
@@ -78,16 +69,20 @@ jobs:
 
       - name: Start Prefect server
         run: |
-          prefect config set PREFECT_API_URL=http://127.0.0.1:4200/api
-          nohup python -m prefect server start > prefect-server.log 2>&1 &
+          nohup python -m prefect server start --host 127.0.0.1 --port 4200 \
+            > prefect-server.log 2>&1 &
 
-          for i in {1..30}; do
-            if curl -s http://127.0.0.1:4200/api/health >/dev/null; then
+          for i in {1..60}; do
+            if curl -fs http://127.0.0.1:4200/api/health >/dev/null; then
               echo "Prefect server ready"
-              break
+              exit 0
             fi
             sleep 2
           done
+
+          echo "Prefect server failed to start"
+          cat prefect-server.log
+          exit 1
 
       - name: Create work pool
         run: |
@@ -97,6 +92,10 @@ jobs:
         run: |
           nohup python -m prefect worker start --pool local > prefect-worker.log 2>&1 &
           sleep 5
+
+      - name: Check Prefect API before deployment
+        run: |
+          curl -fsS http://127.0.0.1:4200/api/health
 
       - name: Deploy flows
         run: |
@@ -181,7 +180,7 @@ jobs:
           cp pages/index.html .local/pages/index.html
 
       - name: Upload PR preview artifact
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && !env.ACT
         uses: actions/upload-artifact@v4
         with:
           name: basic-recipe-preview
