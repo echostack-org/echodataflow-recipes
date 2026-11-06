@@ -211,3 +211,6 @@ __marimo__/
 
 # Local Echodataflow processing data and generated previews
 .local/
+
+/recipes_nrt/cps/data/
+/recipes_nrt/spasso/data/

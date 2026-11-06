@@ -1,42 +1,33 @@
-flow_start_time:
-
-concurrency_groups:
-  copy_raw_serial:
-    limit: 1
-
+source:
+  mode: local
+default_work_pool_name: local
 flows:
   copy_raw:
-    deployment_name: copy-raw-cps-test
-    inject_time_offset: true
-    concurrency_group: copy_raw_serial
-
-  raw2Sv:
-    deployment_name: raw2Sv-cps-test
-    interval: 5
-    deployment_concurrency:
-      limit: 1
-      collision_strategy: CANCEL_NEW
-
-  process_Sv_CPS:
-    deployment_name: process-Sv-CPS-cps-test
-    interval: 5
-    deployment_concurrency:
-      limit: 1
-      collision_strategy: CANCEL_NEW
-
-  simulate_transects:
-    deployment_name: simulate-transects-cps-test
+    deployment_name: template-cps-copy-raw
     interval: 3
-
-  process_transect_CPS:
-    deployment_name: process-transect-CPS-cps-test
-    interval: 20
     deployment_concurrency:
       limit: 1
       collision_strategy: CANCEL_NEW
-
+  raw2Sv:
+    deployment_name: template-cps-raw2Sv
+    interval: 3
+    deployment_concurrency:
+      limit: 1
+      collision_strategy: CANCEL_NEW
+  process_Sv_CPS:
+    deployment_name: template-cps-process-Sv-CPS
+    interval: 5
+    deployment_concurrency:
+      limit: 1
+      collision_strategy: CANCEL_NEW
+  process_transect_CPS:
+    deployment_name: template-cps-process-transect-CPS
+    interval: 5
+    deployment_concurrency:
+      limit: 1
+      collision_strategy: CANCEL_NEW
   update_cache_CPS:
-    deployment_name: update-cache-CPS-cps-test
+    deployment_name: template-cps-update-cache-CPS
     interval: 1
     deployment_concurrency:
       limit: 1

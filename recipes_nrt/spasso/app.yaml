@@ -1,0 +1,90 @@
+app:
+  route: spasso
+  port: 1804
+
+extensions:
+  spasso:
+    factory: echoshader.extensions.spasso:build_tabs
+    requires_source: false
+    root: ./data
+
+    dashboard:
+      title: SPASSO
+      spasso_path: .
+      navigation_path: ../resources/navigation
+      cartopy_path: cartopy_cache
+      map_radius_km: 500
+      navigation_history_hours: 6
+      refresh_seconds: 60
+      plot:
+        width: 520
+        height: 400
+
+    products:
+      sst:
+        title: Sea Surface Temperature
+        tab: Environmental
+        patterns: ["*_Copernicus_SST_L4.nc"]
+        variables: [analysed_sst]
+        cmap: Turbo
+        label: SST (°C)
+        transform: kelvin_to_celsius
+        clim: [10.0, 20.0]
+
+      sss:
+        title: Sea Surface Salinity
+        tab: Environmental
+        patterns: ["*_Copernicus_SSS_L4.nc"]
+        variables: [sos]
+        cmap: Viridis
+        label: SSS
+        clim: [30.0, 34.0]
+
+      chla:
+        title: Chlorophyll-a
+        tab: Environmental
+        patterns: ["*_Copernicus_CHL_L4.nc"]
+        variables: [CHL]
+        cmap: Viridis
+        label: Chlorophyll-a (mg m⁻³)
+        clim: [0.0, 5.0]
+
+      ftle:
+        title: Finite Time Lyapunov Exponent
+        tab: Currents / Diagnostics
+        patterns: ["*_FTLE_Copernicus_PHY.nc"]
+        variables: [ftle]
+        cmap: Greys
+        label: FTLE
+        zero_min: true
+
+      ke:
+        title: Kinetic Energy
+        tab: Currents / Diagnostics
+        patterns: ["*_KE_Copernicus_PHY.nc"]
+        variables: [ke]
+        cmap: Viridis
+        label: KE
+        zero_min: true
+
+      ow:
+        title: Okubo-Weiss Parameter
+        tab: Currents / Diagnostics
+        patterns: ["*_OW_Copernicus_PHY.nc"]
+        variables: [ow]
+        cmap: RdBu_r
+        label: OW
+
+    currents:
+      title: Surface Geostrophic Currents
+      tab: Currents / Diagnostics
+      pattern: "????????_Copernicus_PHY.nc"
+      u_variable: ugos
+      v_variable: vgos
+      cmap: Viridis
+      label: Current speed (m/s)
+      zero_min: true
+      vectors:
+        enabled: true
+        step: 2
+        scale: 0.5

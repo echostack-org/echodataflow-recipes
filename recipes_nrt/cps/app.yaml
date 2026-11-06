@@ -1,0 +1,36 @@
+app:
+  title: SH2407 North — 10 transects of 30 minutes
+  route: cps-north
+  port: 1805
+  source: survey
+
+data:
+  survey:
+    type: zarr
+    path: ./data/viz_cache_CPS/latest_CPS.zarr
+    label: Latest completed transect
+
+display:
+  variables:
+    - Sv
+    - Sv_water_column
+    - Sv_masked
+  max_range_samples: 160
+
+navigation:
+  max_pings: 400
+
+extensions:
+  recent_transects:
+    factory: echoshader.extensions.cps:build_tabs
+    root: ./data
+    processing_db: processing.db
+    count: 10
+    vert_dim: depth
+    xlim: [-125.0, -124.25]
+    requires_source: false
+
+file_catalogue:
+  factory: echoshader.extensions.cps:build_files
+  root: ./data
+  processing_db: processing.db
