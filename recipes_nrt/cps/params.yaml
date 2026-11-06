@@ -1,82 +1,51 @@
 flows:
-  copy_raw:
-    path_raw_list: "/path/to/SH2407_raw_list_organized.csv"
-    path_copy: "/path/to/cps_workflow/raw"
-    s3_bucket: noaa-wcsd-pds
-    exclude_before: "2024-08-05T13:10:00+00:00"
-    exclude_after: "2024-08-06T12:30:00+00:00"
-    endpoint_url: "https://s3.amazonaws.com"
-
-  simulate_transects:
-    path_transect_csv: "/path/to/cps_workflow/plotSurvey_Survey_Data_Visualizer.csv"
-    survey_start: "2024-08-05T13:16:00+00:00"
-    transect_duration_minutes: 180
-    start_transect_num: 1
-    max_transects: 2
-
   raw2Sv:
-    exclude_before: "2024-08-05T13:10:00+00:00"
+    exclude_before: '2024-08-09T00:00:00+00:00'
     exclude_raw_file: []
     parallel: false
     new_file_num_limit: 10
-
     encode_mode: power
     waveform_mode: CW
     depth_offset: 7
     sonar_model: EK80
-    datagram_type:
+    datagram_type: null
     nmea_sentence: GGA
-
     add_depth: true
     add_location: true
     add_splitbeam_angle: true
-
-    filename_pattern: "*.raw"
-
-    path_raw: "/path/to/cps_workflow/raw"
-    path_main: "/path/to/cps_workflow"
-    file_Sv_csv: "Sv_files.csv"
-
-
+    filename_pattern: '*.raw'
+    path_raw: D:/echodataflow_data/sh2407_north_test/raw_selected
+    path_main: D:/echodataflow_data/sh2407_north_test
+    file_Sv_csv: Sv_files.csv
   process_Sv_CPS:
-    exclude_before: "2024-08-05T13:10:00+00:00"
-
-    path_main: "/path/to/cps_workflow"
-    file_Sv_csv: "Sv_files.csv"
-    processing_db: "processing.db"
-
+    exclude_before: '2024-08-09T00:00:00+00:00'
+    path_main: D:/echodataflow_data/sh2407_north_test
+    file_Sv_csv: Sv_files.csv
+    processing_db: processing.db
     new_file_num_limit: 10
-
     target_frequency: 70000
     min_depth: 10
-
-    seafloor_threshold: [-40, 2.4, 1.0]
+    seafloor_threshold:
+    - -40
+    - 2.4
+    - 1.0
     seafloor_offset: 0.5
     seafloor_r0: 10
     seafloor_r1: 1000
     seafloor_wtheta: 28
     seafloor_wphi: 52
-
     mask_mode: cps
     fallback_sv_threshold: -70
-
   process_transect_CPS:
-    exclude_before: "2024-08-05T13:10:00+00:00"
-
-    # Kept temporarily for deployment compatibility
-    # Transect selection is now driven by processing.db
-    path_transect_csv: "/path/to/cps_workflow/plotSurvey_Survey_Data_Visualizer.csv"
-    path_snapshot_csv: "/path/to/cps_workflow/plotSurvey_Survey_Data_Visualizer_snapshot.csv"
-
-    path_main: "/path/to/cps_workflow"
-    processing_db: "processing.db"
-
+    exclude_before: '2024-08-09T00:00:00+00:00'
+    path_transect_csv: D:/echodataflow_data/sh2407_north_test/plotSurvey_Survey_Data_Visualizer.csv
+    path_snapshot_csv: D:/echodataflow_data/sh2407_north_test/plotSurvey_Survey_Data_Visualizer_snapshot.csv
+    path_main: D:/echodataflow_data/sh2407_north_test
+    processing_db: processing.db
     range_bin: 10m
     dist_bin: 0.5nmi
-
-  # Visualization cache
   update_cache_CPS:
-    path_CPS: "/path/to/cps_workflow/CPS_Sv"
-    path_cache: "/path/to/cps_workflow/viz_cache_CPS"
-    processing_db: "processing.db"
+    path_CPS: D:/echodataflow_data/sh2407_north_test/CPS_Sv
+    path_cache: D:/echodataflow_data/sh2407_north_test/viz_cache_CPS
+    processing_db: processing.db
     file_CPS_zarr: latest_CPS.zarr
