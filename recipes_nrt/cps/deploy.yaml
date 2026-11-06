@@ -1,29 +1,34 @@
-flow_start_time: null
+source:
+  mode: local
+default_work_pool_name: local
 flows:
+  copy_raw:
+    deployment_name: template-cps-copy-raw
+    interval: 3
+    deployment_concurrency:
+      limit: 1
+      collision_strategy: CANCEL_NEW
   raw2Sv:
-    deployment_name: raw2Sv-cps-north-30min
-    interval: 5
+    deployment_name: template-cps-raw2Sv
+    interval: 3
     deployment_concurrency:
       limit: 1
       collision_strategy: CANCEL_NEW
   process_Sv_CPS:
-    deployment_name: process-Sv-CPS-cps-north-30min
+    deployment_name: template-cps-process-Sv-CPS
     interval: 5
     deployment_concurrency:
       limit: 1
       collision_strategy: CANCEL_NEW
   process_transect_CPS:
-    deployment_name: process-transect-CPS-cps-north-30min
-    interval: 20
+    deployment_name: template-cps-process-transect-CPS
+    interval: 5
     deployment_concurrency:
       limit: 1
       collision_strategy: CANCEL_NEW
   update_cache_CPS:
-    deployment_name: update-cache-CPS-cps-north-30min
+    deployment_name: template-cps-update-cache-CPS
     interval: 1
     deployment_concurrency:
       limit: 1
       collision_strategy: CANCEL_NEW
-source:
-  mode: local
-default_work_pool_name: local

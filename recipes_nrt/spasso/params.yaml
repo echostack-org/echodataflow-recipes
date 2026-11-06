@@ -1,132 +1,26 @@
 flows:
   fetch_spasso:
-    host: "download host"
-    port: 2221
-    remote_path: "remote path"
-
-    path_main: "path/to/spasso"
-
-    product_patterns:
-      - "Copernicus_PHY"
-      - "Copernicus_SST_L4"
-      - "Copernicus_SSS_L4"
-      - "Copernicus_CHL_L4"
-      - "FTLE_Copernicus_PHY"
-      - "OW_Copernicus_PHY"
-      - "KE_Copernicus_PHY"
-      - "LLADV_Copernicus_PHY"
-
-    username_secret: "spasso-username"
-    password_secret: "spasso-password"
-
+    asset_url: https://github.com/echostack-org/echodataflow-recipes/releases/download/data-v1/spasso-20260918.zip
+    path_main: ../../echodataflow-recipes/recipes_nrt/spasso/data
     task_retries: 3
     task_retry_delay_seconds: 30
 
+# Operational SFTP mode: remove asset_url and add the following
+# parameters under flows.fetch_spasso:
+# host: ftp-access
+# port: port_number
+# remote_path: path/to/data
+# product_patterns:
+#   - Copernicus_PHY
+#   - Copernicus_SST_L4
+#   - Copernicus_SSS_L4
+#   - Copernicus_CHL_L4
+#   - FTLE_Copernicus_PHY
+#   - KE_Copernicus_PHY
+#   - OW_Copernicus_PHY
+# username_secret: spasso-username
+# password_secret: spasso-password
 
-navigation:
-  port: "serial port"
-  baudrate: 4800
-  path_output: "path/to/navigation"
-
-
-dashboard:
-  title: "App title"
-
-  spasso_path: "path/to/spasso"
-  navigation_path: "path/to/navigation"
-  cartopy_path: "path/to/cartopy"
-
-  map_radius_km: 500
-  navigation_history_hours: 6
-  refresh_seconds: 60
-
-  plot:
-    width: 520
-    height: 400
-
-
-products:
-  sst:
-    title: "Sea Surface Temperature"
-    tab: "Environmental"
-    patterns:
-      - "*_Copernicus_SST_L4.nc"
-    variables:
-      - "analysed_sst"
-    cmap: "Turbo"
-    label: "SST (°C)"
-    transform: "kelvin_to_celsius"
-    clim: [10.0, 20.0]
-
-  sss:
-    title: "Sea Surface Salinity"
-    tab: "Environmental"
-    patterns:
-      - "*_Copernicus_SSS_L4.nc"
-    variables:
-      - "sos"
-    cmap: "Viridis"
-    label: "SSS"
-    clim: [30.0, 34.0]
-
-  chla:
-    title: "Chlorophyll-a"
-    tab: "Environmental"
-    patterns:
-      - "*_Copernicus_CHL_L4.nc"
-    variables:
-      - "CHL"
-    cmap: "Viridis"
-    label: "Chlorophyll-a (mg m⁻³)"
-    clim: [0.0, 5.0]
-
-  ftle:
-    title: "Finite Time Lyapunov Exponent"
-    tab: "Currents / Diagnostics"
-    patterns:
-      - "*_FTLE_Copernicus_PHY.nc"
-    variables:
-      - "ftle"
-    cmap: "Greys"
-    label: "FTLE"
-    zero_min: true
-
-  ke:
-    title: "Kinetic Energy"
-    tab: "Currents / Diagnostics"
-    patterns:
-      - "*_KE_Copernicus_PHY.nc"
-    variables:
-      - "ke"
-    cmap: "Viridis"
-    label: "KE"
-    zero_min: true
-
-  ow:
-    title: "Okubo-Weiss Parameter"
-    tab: "Currents / Diagnostics"
-    patterns:
-      - "*_OW_Copernicus_PHY.nc"
-    variables:
-      - "ow"
-    cmap: "RdBu_r"
-    label: "OW"
-
-
-currents:
-  title: "Surface Geostrophic Currents"
-  tab: "Currents / Diagnostics"
-
-  pattern: "????????_Copernicus_PHY.nc"
-
-  u_variable: "ugos"
-  v_variable: "vgos"
-
-  cmap: "Viridis"
-  label: "Current speed (m/s)"
-  zero_min: true
-
-  vectors:
-    enabled: true
-    step: 2
-    scale: 0.5
+# Existing SFTP flow loads the password with:
+# from prefect.blocks.system import Secret
+# password = Secret.load("spasso-password").get()

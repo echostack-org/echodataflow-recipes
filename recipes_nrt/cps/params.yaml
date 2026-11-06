@@ -1,6 +1,13 @@
 flows:
+  copy_raw:
+    path_raw_list: ../../echodataflow-recipes/recipes_nrt/cps/resources/raw_files.csv
+    path_copy: ../../echodataflow-recipes/recipes_nrt/cps/data/raw
+    s3_bucket: noaa-wcsd-pds
+    endpoint_url: https://s3.amazonaws.com
+    files_per_run: 10
+
   raw2Sv:
-    exclude_before: '2024-08-09T00:00:00+00:00'
+    exclude_before: "2024-08-09T00:00:00+00:00"
     exclude_raw_file: []
     parallel: false
     new_file_num_limit: 10
@@ -13,22 +20,20 @@ flows:
     add_depth: true
     add_location: true
     add_splitbeam_angle: true
-    filename_pattern: '*.raw'
-    path_raw: D:/echodataflow_data/sh2407_north_test/raw_selected
-    path_main: D:/echodataflow_data/sh2407_north_test
+    filename_pattern: "*.raw"
+    path_raw: ../../echodataflow-recipes/recipes_nrt/cps/data/raw
+    path_main: ../../echodataflow-recipes/recipes_nrt/cps/data
     file_Sv_csv: Sv_files.csv
+
   process_Sv_CPS:
-    exclude_before: '2024-08-09T00:00:00+00:00'
-    path_main: D:/echodataflow_data/sh2407_north_test
+    exclude_before: "2024-08-09T00:00:00+00:00"
+    path_main: ../../echodataflow-recipes/recipes_nrt/cps/data
     file_Sv_csv: Sv_files.csv
     processing_db: processing.db
     new_file_num_limit: 10
-    target_frequency: 70000
+    target_frequency: 38000
     min_depth: 10
-    seafloor_threshold:
-    - -40
-    - 2.4
-    - 1.0
+    seafloor_threshold: [-40, 2.4, 1.0]
     seafloor_offset: 0.5
     seafloor_r0: 10
     seafloor_r1: 1000
@@ -36,16 +41,20 @@ flows:
     seafloor_wphi: 52
     mask_mode: cps
     fallback_sv_threshold: -70
+    remove_background_noise: false
+    save_intermediates: false
+
   process_transect_CPS:
-    exclude_before: '2024-08-09T00:00:00+00:00'
-    path_transect_csv: D:/echodataflow_data/sh2407_north_test/plotSurvey_Survey_Data_Visualizer.csv
-    path_snapshot_csv: D:/echodataflow_data/sh2407_north_test/plotSurvey_Survey_Data_Visualizer_snapshot.csv
-    path_main: D:/echodataflow_data/sh2407_north_test
+    exclude_before: "2024-08-09T00:00:00+00:00"
+    path_transect_csv: ../../echodataflow-recipes/recipes_nrt/cps/resources/plotSurvey_Survey_Data_Visualizer.csv
+    path_snapshot_csv: ../../echodataflow-recipes/recipes_nrt/cps/data/plotSurvey_Survey_Data_Visualizer_snapshot.csv
+    path_main: ../../echodataflow-recipes/recipes_nrt/cps/data
     processing_db: processing.db
     range_bin: 10m
     dist_bin: 0.5nmi
+
   update_cache_CPS:
-    path_CPS: D:/echodataflow_data/sh2407_north_test/CPS_Sv
-    path_cache: D:/echodataflow_data/sh2407_north_test/viz_cache_CPS
+    path_CPS: ../../echodataflow-recipes/recipes_nrt/cps/data/CPS_Sv
+    path_cache: ../../echodataflow-recipes/recipes_nrt/cps/data/viz_cache_CPS
     processing_db: processing.db
     file_CPS_zarr: latest_CPS.zarr
