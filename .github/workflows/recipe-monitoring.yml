@@ -72,7 +72,7 @@ jobs:
               get_transects_to_process,
           )
 
-          recipe = Path("recipes_nrt/monitoring")
+          recipe = Path("tests/monitoring")
 
           with (recipe / "deploy.yaml").open() as stream:
               deploy = yaml.safe_load(stream)
