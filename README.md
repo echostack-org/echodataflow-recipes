@@ -1,19 +1,20 @@
 # Echodataflow recipes
 
-This repository contains runnable workflows for [Echodataflow](https://github.com/echostack-org/echodataflow), together with [Echoshader](https://github.com/echostack-org/echoshader) visualization configurations.
+This repository hosts recipes of runnable workflows for [Echodataflow](https://github.com/echostack-org/echodataflow).
 
-The recipes are organized as follows:
+Check out [how Echodataflow works](https://echodataflow.readthedocs.io/en/latest/overview/), and follow the instructions in the [Example pipelines](https://echodataflow.readthedocs.io/en/latest/pipeline-examples/) section to run these examples.
+
+Each recipe folder contains deployment and parameter configurations, as well as other required resources or visualization configurations.
+
 
 ```text
-recipes_nrt/          # Near-real-time recipes
-  cps/
-  hake/
-  monitoring/
-  spasso/
-  template/
-
-recipes_postproc/     # Post-processing recipes
-  hake/
+├── .github/                     # GitHub automation
+│   └── workflows/               # Recipe workflows
+├── drafts/                      # Draft miscellany
+├── recipes_nrt/                 # Near-real-time recipes
+│   ├── cps/                     # CPS workflow
+│   ├── edge2cloud_hake/         # Edge-to-cloud workflow
+│   └── spasso/                  # SPASSO workflow
+└── recipes_postproc/            # Post-processing recipes
+    └── edge2cloud_hake/         # Edge-to-cloud hake post-processing
 ```
-
-Each recipe includes deploy.yaml (flow deployments), params.yaml (processing parameters), and any required resources or visualization configurations.
