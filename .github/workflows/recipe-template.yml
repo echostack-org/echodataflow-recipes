@@ -65,7 +65,7 @@ jobs:
 
           root = Path.cwd().resolve()
 
-          params_path = Path("recipes_nrt/template/params.yaml")
+          params_path = Path("tests/template/params.yaml")
           params = yaml.safe_load(params_path.read_text())
 
           params["flows"]["raw2Sv"]["path_raw"] = str(root / ".local/template/raw")
@@ -74,7 +74,7 @@ jobs:
 
           params_path.write_text(yaml.safe_dump(params, sort_keys=False))
 
-          app_path = Path("recipes_nrt/template/acoustic_template.yaml")
+          app_path = Path("tests/template/acoustic_template.yaml")
           app = yaml.safe_load(app_path.read_text())
 
           app["data"]["survey"]["path"] = str(
@@ -121,8 +121,8 @@ jobs:
         run: |
           python -m echodataflow.deployment.deploy_cli run \
             --default-work-pool-name local \
-            --param-config recipes_nrt/template/params.yaml \
-            --deploy-spec recipes_nrt/template/deploy.yaml
+            --param-config tests/template/params.yaml \
+            --deploy-spec tests/template/deploy.yaml
 
       - name: Run raw2Sv
         run: |
@@ -153,7 +153,7 @@ jobs:
           from echoshader.app.config import load_config
           from echoshader.app.builder import build_app
 
-          config = load_config("recipes_nrt/template/acoustic_template.yaml")
+          config = load_config("tests/template/acoustic_template.yaml")
           app = build_app(config)
 
           assert app is not None
@@ -181,7 +181,7 @@ jobs:
           output_dir.mkdir(parents=True, exist_ok=True)
           output = output_dir / "index.html"
 
-          config = load_config("recipes_nrt/template/acoustic_template.yaml")
+          config = load_config("tests/template/acoustic_template.yaml")
           app = build_app(config)
 
           # Static HTML export is a snapshot; server-side Panel callbacks require a live server.
@@ -199,7 +199,7 @@ jobs:
       - name: Prepare Pages landing page
         run: |
           mkdir -p .local/pages
-          cp pages/index.html .local/pages/index.html
+          cp drafts/pages/index.html .local/pages/index.html
 
       - name: Upload PR preview artifact
         if: github.event_name == 'pull_request' && !env.ACT
@@ -237,4 +237,3 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
-
