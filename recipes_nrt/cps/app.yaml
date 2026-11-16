@@ -1,34 +1,49 @@
 app:
-  title: SH2407 North — 10 transects of 30 minutes
-  route: cps-north
+  title: Echoshader
+  route: cps
   port: 1805
   source: survey
+  refresh_seconds: 60
 
 data:
   survey:
     type: zarr
-    path: ./data/viz_cache_CPS/latest_CPS.zarr
+    path: ./data/viz_cache_CPS/transects/transect_001.zarr
     label: Latest completed transect
 
-display:
-  variables:
-    - Sv
-    - Sv_water_column
-    - Sv_masked
-  max_range_samples: 160
-
 navigation:
-  max_pings: 400
+  max_pings: 500
+
+display:
+  variables: [Sv, Sv_water_column, Sv_masked]
+  vert_dim: depth
+  rasterized: true
+  max_range_samples: 0 # to use all range samples
+  cache_mb: 512
+  rgb_frequencies: [120000, 38000, 70000]
+  plot_height: 300
+  tricolor_height: 450
+  opts: {}
 
 extensions:
   recent_transects:
     factory: echoshader.extensions.cps:build_tabs
     root: ./data
     processing_db: processing.db
-    count: 10
+    count: 5
     vert_dim: depth
-    xlim: [-125.0, -124.25]
+    plot_height: 400
     requires_source: false
+    refresh_seconds: 60
+    rgb_frequencies: [120000, 38000, 70000]
+    opts: {}
+
+  database:
+    factory: echoshader.extensions.cps.status:build_status
+    root: ./data
+    processing_db: processing.db
+    requires_source: false
+    opts: {width: 1500, height: 500}
 
 file_catalogue:
   factory: echoshader.extensions.cps:build_files
