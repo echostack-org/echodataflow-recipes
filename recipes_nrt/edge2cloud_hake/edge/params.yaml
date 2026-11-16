@@ -2,7 +2,7 @@ flows:
   # Simulation flows to generate acoustic and trawl data ================
   copy_raw:
     path_raw_list: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/resources/raw_files.csv
-    path_copy: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/data/raw
+    path_copy: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/data/acoustics/raw
     endpoint_url: https://sdsc.osn.xsede.org
     s3_bucket: agr230002-bucket01
     exclude_before: "2025-07-09T12:00:00+00:00"  # use ISO8601 format: if UTC use +00:00 or Z
@@ -22,7 +22,7 @@ flows:
 
   # Actual flows ========================================================
   raw2Sv:
-    exclude_before: "YYYY-mm-DDTHH:MM:SS+00:00"
+    exclude_before: "2025-07-09T12:00:00+00:00"  # use ISO8601 format: if UTC use +00:00 or Z
     exclude_raw_file: []
     parallel: False
     encode_mode: power
@@ -31,8 +31,8 @@ flows:
     sonar_model: EK80
     nmea_sentence: GGA
     filename_pattern: "IWCPS-*.raw"
-    path_raw: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/data/raw
-    path_main: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/data
+    path_raw: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/data/acoustics/raw
+    path_main: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/data/acoustics
     file_Sv_csv: Sv_files.csv
 
   create_MVBS:
@@ -40,7 +40,7 @@ flows:
     num_slices: 3
     range_bin: 1m
     ping_time_bin: 5s
-    path_main: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/data
+    path_main: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/data/acoustics
     file_Sv_csv: Sv_files.csv
     file_MVBS_csv: MVBS_files.csv
 
@@ -51,13 +51,13 @@ flows:
     softmax_threshold: 0.5
     max_depth: 590.0
     path_weight: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/resources/hake_model.ckpt
-    path_main: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/data
+    path_main: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/data/acoustics
     file_MVBS_csv: MVBS_files.csv
     file_prediction_csv: prediction_files.csv
 
   file_upload_acoustics:
-    src_dir: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/data
-    dest_dir: ENDPOINT:BUCKET/acoustics
+    src_dir: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/data/acoustics
+    dest_dir: RCLONE_REMOTE:BUCKET/FOLDER
     exclude_subdirs:
       - Sv
       - raw
@@ -65,6 +65,6 @@ flows:
 
   file_upload_trawl:
     src_dir: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/data/trawl
-    dest_dir: ENDPOINT:BUCKET/trawl
+    dest_dir: RCLONE_REMOTE:BUCKET/FOLDER
     exclude_subdirs: []
     max_age: 2
