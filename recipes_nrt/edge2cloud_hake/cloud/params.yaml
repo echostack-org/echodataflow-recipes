@@ -27,8 +27,8 @@ flows:
 
   update_cache_MVBS:
     slice_mins: 180
-    path_cache: "../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/cloud/data/viz_cache_MVBS"
-    path_MVBS: "BUCKET/FOLDER/acoustics/MVBS"
-    cred_file: "PATH/TO/.config/rclone/rclone.conf"
+    path_cache: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/cloud/data/viz_cache_MVBS
+    path_MVBS: BUCKET/FOLDER/acoustics/MVBS
+    cred_file: PATH/TO/.config/rclone/rclone.conf
     file_MVBS_csv: MVBS_files.csv
     file_MVBS_zarr: latest_MVBS.zarr
