@@ -212,6 +212,8 @@ __marimo__/
 # Local Echodataflow processing data and generated previews
 .local/
 
+/recipes_nrt/edge2cloud_hake/edge/data/
+/recipes_nrt/edge2cloud_hake/cloud/data/
 /recipes_nrt/cps/data/
-/recipes_nrt/spasso/data/
 /recipes_nrt/cps/data_rl2107/
+/recipes_nrt/spasso/data/

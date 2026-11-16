@@ -1,11 +1,22 @@
-flow_start_time: # use ISO8601 format: if UTC use +00:00 or Z
+flow_start_time: "2025-07-09T12:45:00+00:00"  # use ISO8601 format: if UTC use +00:00 or Z
 
 source:
   mode: local
 
-default_work_pool_name: edge-local
+default_work_pool_name: local
 
 flows:
+  # Simulation flows to generate acoustic and trawl data ================
+  copy_raw:
+    deployment_name: copy-raw
+    interval: 5
+    inject_time_offset: true
+
+  copy_trawl:
+    deployment_name: copy-trawl
+    interval: 20
+
+  # Actual flows ========================================================
   raw2Sv:
     deployment_name: raw2Sv
     deployment_concurrency:
@@ -17,10 +28,12 @@ flows:
     deployment_name: create-MVBS
     interval: 10
     cron_offset: 3
+    inject_time_offset: true
 
-  predict_hake:
-    deployment_name: predict-hake
+  classify_backscatter:
+    deployment_name: classify-backscatter
     interval: 20
+    inject_time_offset: true
 
   file_upload_acoustics:
     deployment_name: file-upload-acoustics

@@ -1,6 +1,6 @@
 flows:
   ingest_haul:
-    path_vm_local: PATH/TO/DATA  # path to local integrated data
+    path_vm_local: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/cloud/data  # path to local integrated data
     path_bio_files: BUCKET/trawl  # path to cloud trawl data
     cred_file: PATH/TO/.config/rclone/rclone.conf
     file_haul_info_all: haul_info_all.csv
@@ -11,7 +11,7 @@ flows:
     path_stratum_def: PATH/TO/resources/inpfc_def.csv
 
   ingest_NASC:
-    path_vm_local: PATH/TO/DATA # path to local integrated data
+    path_vm_local: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/cloud/data # path to local integrated data
     path_NASC_files: BUCKET/acoustics/NASC # path to cloud acoustic data
     cred_file: "PATH/TO/.config/rclone/rclone.conf"
     file_NASC_all: NASC_all.csv
@@ -21,13 +21,13 @@ flows:
     new_file_num_limit: 200
 
   update_grid:
-    path_vm_local: PATH/TO/DATA # path to local integrated data
+    path_vm_local: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/cloud/data # path to local integrated data
     file_NASC_all_grid: NASC_all_griddify.geojson
     file_stratum_mean: stratum_mean.csv
 
   update_cache_MVBS:
     slice_mins: 180
-    path_cache: "PATH/TO/CACHE"
+    path_cache: "../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/cloud/data/viz_cache_MVBS"
     path_MVBS: "BUCKET/FOLDER/acoustics/MVBS"
     cred_file: "PATH/TO/.config/rclone/rclone.conf"
     file_MVBS_csv: MVBS_files.csv
