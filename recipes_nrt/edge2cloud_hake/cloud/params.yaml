@@ -1,8 +1,7 @@
 flows:
   ingest_haul:
     path_vm_local: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/cloud/data  # path to local integrated data
-    path_bio_files: BUCKET/FOLDER/trawl  # path to cloud trawl data
-    cred_file: PATH/TO/.config/rclone/rclone.conf  # path to rclone config file
+    path_bio_files: remote:bucket/path/to/dir  # rclone format
     file_haul_info_all: haul_info_all.csv
     file_specimen_all: specimen_all.csv
     file_length_all: length_all.csv
@@ -12,8 +11,7 @@ flows:
 
   ingest_NASC:
     path_vm_local: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/cloud/data # path to local integrated data
-    path_NASC_files: BUCKET/FOLDER/acoustics/NASC  # path to cloud NASC data
-    cred_file: PATH/TO/.config/rclone/rclone.conf  # path to rclone config file
+    path_NASC_files: remote:bucket/path/to/dir  # rclone format
     file_NASC_all: NASC_all.csv
     file_stratum_mean: stratum_mean.csv
     file_NASC_all_grid: NASC_all_griddify.geojson
@@ -28,7 +26,6 @@ flows:
   update_cache_MVBS:
     slice_mins: 180
     path_cache: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/cloud/data/viz_cache_MVBS
-    path_MVBS: BUCKET/FOLDER/acoustics/MVBS  # path to cloud MVBS data
-    cred_file: PATH/TO/.config/rclone/rclone.conf  # path to rclone config file
+    path_MVBS: remote:bucket/path/to/dir  # rclone format
     file_MVBS_csv: MVBS_files.csv
     file_MVBS_zarr: latest_MVBS.zarr

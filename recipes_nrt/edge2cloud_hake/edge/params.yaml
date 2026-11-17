@@ -57,7 +57,7 @@ flows:
 
   file_upload_acoustics:
     src_dir: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/data/acoustics
-    dest_dir: REMOTE:BUCKET/FOLDER  # rclone format
+    dest_dir: remote:bucket/path/to/dir  # rclone format
     exclude_subdirs:
       - Sv
       - raw
@@ -65,6 +65,6 @@ flows:
 
   file_upload_trawl:
     src_dir: ../../echodataflow-recipes/recipes_nrt/edge2cloud_hake/edge/data/trawl
-    dest_dir: REMOTE:BUCKET/FOLDER  # rclone format
+    dest_dir: remote:bucket/path/to/dir  # rclone format
     exclude_subdirs: []
     max_age: 2
