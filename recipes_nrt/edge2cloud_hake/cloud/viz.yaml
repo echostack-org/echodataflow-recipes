@@ -1,7 +1,6 @@
 echogram:
   cache_dir: data/viz_cache_MVBS  # path relative to viz.yaml
   mvbs_file: latest_MVBS.zarr
-  contours_file: latest_contours.csv
   vertical_dimension: depth
   color_limits: [-70, -36]
   port: 1802
