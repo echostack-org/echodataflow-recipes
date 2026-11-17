@@ -1,5 +1,5 @@
 echogram:
-  cache_dir: data/viz_cache_MVBS
+  cache_dir: data/viz_cache_MVBS  # path relative to viz.yaml
   mvbs_file: latest_MVBS.zarr
   contours_file: latest_contours.csv
   vertical_dimension: depth
@@ -18,7 +18,7 @@ echogram:
     - WBT 400141-15 ES18_ES  # blue
 
 bio:
-  data_dir: data
+  data_dir: data  # path relative to viz.yaml
   grid_file: grid_cells.geojson
   nasc_file: NASC_all.csv
   length_count_file: length_count_all.csv
