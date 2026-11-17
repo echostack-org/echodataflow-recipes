@@ -5,7 +5,6 @@ flows:
   update_cache_MVBS:
     slice_mins: 180
     path_cache: "PATH/TO/CACHE"
-    path_MVBS: "BUCKET/FOLDER/acoustics/MVBS"
-    cred_file: "PATH/TO/.config/rclone/rclone.conf"
+    path_MVBS: "remote:bucket/path/to/dir"
     file_MVBS_csv: MVBS_files.csv
     file_MVBS_zarr: latest_MVBS.zarr

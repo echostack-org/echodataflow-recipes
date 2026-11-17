@@ -1,10 +1,7 @@
-flow_start_time: # use ISO8601 format: if UTC use +00:00 or Z
+flow_start_time: "2025-07-09T12:45:00+00:00"  # use ISO8601 format: if UTC use +00:00 or Z
 
 source:
   mode: local
-  git:
-    url: https://github.com/echostack-org/echodataflow.git
-    branch: origin/main
 
 default_work_pool_name: cloud-local
 
